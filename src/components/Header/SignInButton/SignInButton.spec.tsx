@@ -10,8 +10,8 @@ describe('SignInButton component', () => {
 
     it('renders log-in button when user is not authenticated', () => {
 
-        const useSessionMocked = mocked(useSession)
-        useSessionMocked.mockReturnValueOnce({data: null, status: "unauthenticated"})
+        const useSessionMock = mocked(useSession)
+        useSessionMock.mockReturnValueOnce({data: null, status: "unauthenticated"})
 
         const {debug} = render(<SignInButton />)
 
@@ -22,8 +22,8 @@ describe('SignInButton component', () => {
 
     it('renders log-out button when user is authenticated', () => {
 
-        const useSessionMocked = mocked(useSession)
-        useSessionMocked.mockReturnValue(
+        const useSessionMock = mocked(useSession)
+        useSessionMock.mockReturnValue(
             {
                 data: {
                     user: {

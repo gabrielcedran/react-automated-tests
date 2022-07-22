@@ -65,8 +65,8 @@ describe('Description', () => {
 
     test('narrative', () => {
 
-        const useRouterMocked = mocked(useRouter)
-        useRouterMocked.mockReturnValue({
+        const useRouterMock = mocked(useRouter)
+        useRouterMock.mockReturnValue({
             asPath: '/'
         } as NextRouter) // each test can mock its own return
 
