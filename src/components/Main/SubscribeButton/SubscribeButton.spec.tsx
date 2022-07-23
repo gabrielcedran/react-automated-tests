@@ -3,9 +3,29 @@ import { useSession, signIn } from "next-auth/react"
 import { NextRouter, useRouter } from 'next/router'
 import { SubscribeButton } from "."
 import { mocked } from 'jest-mock'
+import { api } from '../../../services/api';
 
 jest.mock('next-auth/react')
 jest.mock('next/router')
+jest.mock('../../../services/api'
+/* example of how to mock internal modules generically
+, () => {
+    return {
+        // api is not a function
+        api: {
+            // post is a function inside api
+            post() {
+                return {
+                    data: {
+                        sessionId: "abc"
+                    }
+                }
+            }
+        }
+    }
+}*/
+)
+jest.mock('../../../services/stripe-js')
 
 describe('SubscribeButton component', () => {
 
@@ -73,4 +93,33 @@ describe('SubscribeButton component', () => {
         expect(pushMock).toHaveBeenCalledWith('/posts')
     })
 
+    it('redirects to checkout when user is logged in but not subscribed', () => {
+        const useSessionMock = mocked(useSession)
+        useSessionMock.mockReturnValueOnce({
+            data: {
+                expires: "expires-mock"
+            },
+            status: "authenticated"
+        })
+
+        
+        const postMock = jest.fn().mockResolvedValueOnce({data: {sessionId: "vtnc corno"}})
+
+        // api is not a function, but an object with functions. The best way that I found to mock it was:
+        const apiMock = mocked(api)
+        // this works: apiMock.post = (): any => { return {data: {sessionId: "vtnc corno"}}}
+        // this also works and allows assertion on the number of calls that it's been called
+        apiMock.post = postMock
+
+
+
+        render(<SubscribeButton />)
+
+        // when
+        const subscribeButton = screen.getByText("Subscribe now")
+        fireEvent.click(subscribeButton)
+
+        // then
+        expect(postMock).toHaveBeenCalled()
+    })
 })

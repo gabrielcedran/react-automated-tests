@@ -21,6 +21,7 @@ export function SubscribeButton() {
         }
 
         try {
+            
             const response = await api.post('/subscribe')
 
             const {sessionId} = response.data;
