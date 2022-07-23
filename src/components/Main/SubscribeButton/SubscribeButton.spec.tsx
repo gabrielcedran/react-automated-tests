@@ -1,14 +1,15 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { useSession, signIn } from "next-auth/react"
 import { NextRouter, useRouter } from 'next/router'
 import { SubscribeButton } from "."
 import { mocked } from 'jest-mock'
 import { api } from '../../../services/api';
+import { getStripeJs } from '../../../services/stripe-js';
 
 jest.mock('next-auth/react')
 jest.mock('next/router')
 jest.mock('../../../services/api'
-/* example of how to mock internal modules generically
+/* example of how to mock internal modules generically - mocking objects
 , () => {
     return {
         // api is not a function
@@ -25,7 +26,20 @@ jest.mock('../../../services/api'
     }
 }*/
 )
-jest.mock('../../../services/stripe-js')
+jest.mock('../../../services/stripe-js', 
+/* Example of how to mock internal modules generically - mocking functions
+() => {
+    return {
+        getStripeJs() {
+            return {
+                redirectToCheckout() {
+                    console.log("testttttt")
+                }
+            }
+        }
+    }
+} */
+)
 
 describe('SubscribeButton component', () => {
 
@@ -93,7 +107,7 @@ describe('SubscribeButton component', () => {
         expect(pushMock).toHaveBeenCalledWith('/posts')
     })
 
-    it('redirects to checkout when user is logged in but not subscribed', () => {
+    it('redirects to checkout when user is logged in but not subscribed', async () => {
         const useSessionMock = mocked(useSession)
         useSessionMock.mockReturnValueOnce({
             data: {
@@ -103,16 +117,25 @@ describe('SubscribeButton component', () => {
         })
 
         
-        const postMock = jest.fn().mockResolvedValueOnce({data: {sessionId: "vtnc corno"}})
+        const postMock = jest.fn().mockReturnValueOnce({data: {sessionId: "abc"}})
 
         // api is not a function, but an object with functions. The best way that I found to mock it was:
         const apiMock = mocked(api)
-        // this works: apiMock.post = (): any => { return {data: {sessionId: "vtnc corno"}}}
+        // this works: apiMock.post = (): any => { return {data: {sessionId: "abc"}}}
         // this also works and allows assertion on the number of calls that it's been called
         apiMock.post = postMock
 
 
-
+        const redirectToCheckoutMock = jest.fn().mockImplementationOnce(() => {
+            console.log("example of how to mock implementation")
+        })
+        const getStripeJsMock = mocked(getStripeJs)
+        getStripeJsMock.mockReturnValueOnce({
+            // this works: redirectToCheckout: () => { console.log("testing again")}
+            // this also works and allows assertion as it is mocked via jest
+            redirectToCheckout: redirectToCheckoutMock
+        } as any)
+        
         render(<SubscribeButton />)
 
         // when
@@ -120,6 +143,7 @@ describe('SubscribeButton component', () => {
         fireEvent.click(subscribeButton)
 
         // then
-        expect(postMock).toHaveBeenCalled()
+        expect(postMock).toHaveBeenCalledWith("/subscribe")
+        await waitFor(() => expect(redirectToCheckoutMock).toHaveBeenCalledWith({"sessionId": "abc"}))
     })
 })
