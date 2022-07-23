@@ -123,3 +123,12 @@ describre('description', () => {
 ```
 
 It could be a global mock like this or one specific by test.
+
+
+### Next Tests 
+
+Next test files cannot stay in the pages directory together with their respective file because it would conflict with next's paths system.
+
+Because of that, keep them in a test directory is a good practice.
+
+
