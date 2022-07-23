@@ -125,6 +125,10 @@ describe('SubscribeButton component', () => {
         // this also works and allows assertion on the number of calls that it's been called
         apiMock.post = postMock
 
+        // >>>> better solution: 
+        // const postMock = mocked(api.post)
+        // postMock.mockResolvedValueOnce({data: {sessionId: "abc"}})
+
 
         const redirectToCheckoutMock = jest.fn().mockImplementationOnce(() => {
             console.log("example of how to mock implementation")
