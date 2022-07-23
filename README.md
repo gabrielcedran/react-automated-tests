@@ -80,3 +80,46 @@ describe('Description', () => {
 _for more details, refer to commit_
 
 
+### Emulating events on html elements
+
+In order to emulate events (and user actions) on html, it is just a matter of getting the element (e.g screen.getByText(...)) and passing it down to the desired event function of the fireEvent component.
+
+```
+import { fireEvent, render, screen } from "@testing-library/react"
+
+...
+
+    render(<SubscribeButton/>)
+
+    const subscribeButton = screen.getByText("Subscribe now")
+
+    fireEvent.click(subscribeButton)
+```
+
+
+
+### Inspecting that a function has been called
+
+When it is necessary to check that a given function has been called all that needs to be done is (1) mock the element similarly to the previous example (jest.mock, mock the function's results) (2) decorate the function with the `mocked` function (3) inspect that it's been called with the `expect` matcher.
+
+Example:
+
+```
+jest.mock('next-auth/react', () => {
+    return {
+        signIn: jest.fn(), // void functions can use this jest function that has no return
+    }
+})
+
+
+describre('description', () => {
+    it('redirects user to signin when not authenticated', () => {
+        const signInMock = mocked(signIn)
+        ...
+        expect(signInMock).toHaveBeenCalled()
+
+    })
+})
+```
+
+It could be a global mock like this or one specific by test.
