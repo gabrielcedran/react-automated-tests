@@ -61,5 +61,14 @@ describe('Home page', () => {
 
         expect(response.props).toMatchObject({product: {priceId: "abc", amount: "R$12.34"}})
         expect(response.revalidate).toBe(86400)
+
+        expect(response).toEqual(
+            expect.objectContaining({
+                props: {
+                    product: {priceId: "abc", amount: "R$12.34"}
+                },
+                revalidate: 86400
+            })
+        )
     })
 })
