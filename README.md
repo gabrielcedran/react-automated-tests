@@ -132,3 +132,9 @@ Next test files cannot stay in the pages directory together with their respectiv
 Because of that, keep them in a test directory is a good practice.
 
 
+### Testing playground URL
+
+When you are not sure how to get the element that you want to test from the `screen`, it is possible to generate a playground UI where it allows you to
+see the component that has been rendered and select the element you want to pick. It will generate the best selector (and possible ones) to pick it up.
+
+`screen.logTestingPlaygroundURL()`.
