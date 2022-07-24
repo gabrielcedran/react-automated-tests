@@ -70,8 +70,24 @@ describe('Post page', () => {
 
         const getPrismicClientMock = mocked(getPrismicClient)
         getPrismicClientMock.mockReturnValueOnce({
-            getByUID: () => {
-                return {
+            // getByUID: () => {
+            //     return {
+            //         data: {
+            //             title: [{
+            //                 type: 'heading',
+            //                 text: 'Title 1'
+            //             }],
+            //             content: [{
+            //                 type: 'paragraph',
+            //                 text: 'Paragraph one',
+            //                 spans: []
+            //             }]
+            //         },
+            //         last_publication_date: '01-04-2022'
+            //     }
+            // }
+            getByUID: jest.fn().mockResolvedValueOnce(
+                {
                     data: {
                         title: [{
                             type: 'heading',
@@ -85,7 +101,7 @@ describe('Post page', () => {
                     },
                     last_publication_date: '01-04-2022'
                 }
-            }
+            )
         } as any)
         
         const response = await getServerSideProps({req: {} as any, params: {slug: "abc"}} as any)
