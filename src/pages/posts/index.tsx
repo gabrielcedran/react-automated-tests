@@ -51,6 +51,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const response = await prismic.getAllByType('post', {fetch: ['post.title', 'post.content'], pageSize: 10})
 
     const posts = response.map(post => {
+
         return {
             slug: post.uid,
             title: prismicH.asText(post.data.title),
