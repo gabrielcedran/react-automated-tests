@@ -138,3 +138,23 @@ When you are not sure how to get the element that you want to test from the `scr
 see the component that has been rendered and select the element you want to pick. It will generate the best selector (and possible ones) to pick it up.
 
 `screen.logTestingPlaygroundURL()`.
+
+
+### Coverage report
+
+To full details on coverage report with jest, refer to official documentation.
+
+In a nutshell, to enable coverage report, add the following lines to `jest.config.js`:
+
+```
+    collectCoverage: true,
+    collectCoverageFrom: [
+        'src/**/*.{ts,tsx}',
+        '!src/**/*.spec.{ts,tsx}',
+        '!**/node_modules/**',
+        '!**/vendor/**'
+    ],
+    coverageReporters: ["lcov", "json"],
+```
+
+And run the tests with the parameter `--coverage` - `yarn test --coverage`. The tests will be generated under `root-path/coverage`.
